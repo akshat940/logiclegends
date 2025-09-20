@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Sports Talent Ecosystem — Demo</title>
+  <style>
+    :root{
+      --bg-1: linear-gradient(135deg,#0f172a 0%, #0b1f2f 50%, #05263b 100%);
+      --card: rgba(255,255,255,0.06);
+      --glass: rgba(255,255,255,0.04);
+      --accent-1: #5eead4; /* teal */
+      --accent-2: #60a5fa; /* blue */
+      --muted: #cbd5e1;
+      --radius: 14px;
+      --shadow: 0 6px 18px rgba(2,6,23,0.6);
+      --glass-border: rgba(255,255,255,0.06);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:var(--bg-1);color:#e6eef8}
+
+    /* Layout */
+    .container{max-width:1100px;margin:32px auto;padding:28px}
+    header{display:flex;align-items:center;justify-content:space-between;gap:16px}
+
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:46px;height:46px;border-radius:10px;background:linear-gradient(135deg,var(--accent-2),var(--accent-1));box-shadow:0 6px 18px rgba(96,165,250,0.12);display:flex;align-items:center;justify-content:center;font-weight:700}
+    .brand h1{font-size:18px;margin:0}
+    .tag{font-size:12px;color:var(--muted)}
+
+    nav{display:flex;gap:12px}
+    .btn{background:transparent;border:1px solid transparent;padding:10px 14px;border-radius:10px;font-weight:600;cursor:pointer}
+    .btn.ghost{border-color:transparent;color:var(--muted)}
+    .btn.primary{background:linear-gradient(90deg,var(--accent-1),var(--accent-2));color:#032;box-shadow:0 8px 30px rgba(96,165,250,0.12)}
+
+    main{display:grid;grid-template-columns:1fr 420px;gap:24px;margin-top:26px}
+
+    /* Left - main area */
+    .panel{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);border:1px solid var(--glass-border)}
+
+    .search-row{display:flex;gap:12px;align-items:center}
+    .search{flex:1;display:flex;gap:8px;align-items:center;padding:10px;border-radius:12px;background:var(--card)}
+    .search input{flex:1;background:transparent;border:0;color:inherit;outline:none;font-size:15px}
+
+    .filters{display:flex;gap:8px;margin-top:12px}
+    .chip{padding:8px 10px;border-radius:999px;background:rgba(255,255,255,0.02);font-size:13px;border:1px solid rgba(255,255,255,0.02);cursor:pointer}
+
+    .talent-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:16px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:14px;border-radius:12px;border:1px solid var(--glass-border);cursor:pointer;transition:transform .18s ease, box-shadow .18s ease}
+    .card:hover{transform:translateY(-6px);box-shadow:0 20px 40px rgba(2,6,23,0.6)}
+    .avatar{width:64px;height:64px;border-radius:10px;background:linear-gradient(135deg,#233, #134);display:flex;align-items:center;justify-content:center;font-weight:700}
+    .meta{display:flex;gap:12px;align-items:center}
+    .name{font-weight:700}
+    .role{font-size:13px;color:var(--muted)}
+    .score{margin-left:auto;background:linear-gradient(90deg,var(--accent-1),var(--accent-2));padding:6px 10px;border-radius:10px;color:#042;font-weight:700}
+
+    /* Right - upload & insights */
+    .right-col{display:flex;flex-direction:column;gap:16px}
+
+    .upload-area{padding:16px;border-radius:12px;border:1px dashed rgba(255,255,255,0.06);background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+    .upload-area.dragover{border-style:solid;box-shadow:0 12px 30px rgba(0,0,0,0.35)}
+    .upload-area p{margin:0;color:var(--muted);font-size:14px}
+
+    .file-input{display:none}
+    .upload-btn{padding:10px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:transparent;cursor:pointer}
+
+    .preview{width:100%;border-radius:10px;overflow:hidden;margin-top:8px}
+    video{width:100%;display:block}
+
+    .insights{padding:12px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid var(--glass-border)}
+
+    footer{margin-top:22px;text-align:center;color:var(--muted);font-size:13px}
+
+    /* Responsive */
+    @media (max-width:980px){main{grid-template-columns:1fr} .right-col{order:-1}}
+
+    /* small utilities */
+    .muted{color:var(--muted)}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo">AI</div>
+        <div>
+          <h1>Sports Talent AI</h1>
+          <div class="tag">AI-powered scouting & analytics</div>
+        </div>
+      </div>
+      <nav>
+        <button class="btn ghost">Insights</button>
+        <button class="btn ghost">Events</button>
+        <button class="btn primary">Get Started</button>
+      </nav>
+    </header>
+
+    <main>
+      <section>
+        <div class="panel">
+          <div class="search-row">
+            <div class="search">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="opacity:.8"><path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <input id="search" placeholder="Search athletes, skills, teams..." />
+              <button class="btn">Filter</button>
+            </div>
+          </div>
+
+          <div class="filters" aria-hidden>
+            <div class="chip">Football</div>
+            <div class="chip">Basketball</div>
+            <div class="chip">Speed/Acceleration</div>
+            <div class="chip">Recent Uploads</div>
+          </div>
+
+          <div class="talent-grid" id="talentGrid">
+            <!-- Example clickable cards -->
+            <div class="card" tabindex="0" role="button" onclick="openProfile('Aman Kumar')">
+              <div class="meta">
+                <div class="avatar">AK</div>
+                <div>
+                  <div class="name">Aman Kumar</div>
+                  <div class="role">Wing Forward • 19</div>
+                </div>
+                <div class="score">87</div>
+              </div>
+            </div>
+
+            <div class="card" tabindex="0" role="button" onclick="openProfile('Sana Verma')">
+              <div class="meta">
+                <div class="avatar">SV</div>
+                <div>
+                  <div class="name">Sana Verma</div>
+                  <div class="role">Point Guard • 21</div>
+                </div>
+                <div class="score">91</div>
+              </div>
+            </div>
+
+            <div class="card" tabindex="0" role="button" onclick="openProfile('Rohit Singh')">
+              <div class="meta">
+                <div class="avatar">RS</div>
+                <div>
+                  <div class="name">Rohit Singh</div>
+                  <div class="role">Sprinter • 17</div>
+                </div>
+                <div class="score">94</div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <footer class="muted">Click a card to view more — this demo has clickable cards and video upload on the right.</footer>
+      </section>
+
+      <aside class="right-col">
+        <div class="panel upload-area" id="uploadArea">
+          <div style="text-align:center">
+            <strong>Upload performance video</strong>
+            <p class="muted">Drag & drop a recording or click to choose a file. Accepts mp4, mov, webm.</p>
+          </div>
+          <input class="file-input" id="fileInput" type="file" accept="video">
+          <button class="upload-btn" id="openFileBtn">Choose video</button>
+
+          <div class="preview" id="previewContainer" style="display:none">
+            <video id="previewVideo" controls playsinline></video>
+          </div>
+        </div>
+
+        <div class="insights panel">
+          <h3 style="margin-top:0">Quick Insights</h3>
+          <p class="muted">After uploading, AI will analyse: speed, jump height, reaction time and technical moves. This demo only previews the video locally.</p>
+          <ul class="muted">
+            <li>Upload any single video file (max size depends on your server)</li>
+            <li>Clickable athlete cards open profile details (demo alert)</li>
+          </ul>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script>
+    // Clickable card action (demo)
+    function openProfile(name){
+      alert('Open profile — ' + name + '\nReplace this with a route or modal for full profile and AI insights.');
+    }
+
+    // File upload + drag-drop preview
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    const openFileBtn = document.getElementById('openFileBtn');
+    const previewContainer = document.getElementById('previewContainer');
+    const previewVideo = document.getElementById('previewVideo');
+
+    openFileBtn.addEventListener('click', ()=> fileInput.click());
+
+    ;['dragenter','dragover']forEach(ev=>{
+      uploadArea.addEventListener(ev, e=>{e.preventDefault();e.stopPropagation();uploadArea.classList.add('dragover')});
+    });
+    ;['dragleave','drop']forEach(ev=>{
+      uploadArea.addEventListener(ev, e=>{e.preventDefault();e.stopPropagation();uploadArea.classList.remove('dragover')});
+    });
+
+    uploadArea.addEventListener('drop', e=>{
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      handleFiles(files);
+    });
+
+    fileInput.addEventListener('change', e=> handleFiles(e.target.files));
+
+    function handleFiles(files){
+      if(!files || files.length===0) return;
+      const file = files[0];
+      if(!file.type.startsWith('video/')){ alert('Please upload a video file'); return }
+
+      // preview
+      const url = URL.createObjectURL(file);
+      previewVideo.src = url;
+      previewContainer.style.display = 'block';
+
+      // here you would send `file` to your backend AI pipeline (fetch/axios/formdata)
+      // example (commented):
+      // const fd = new FormData(); fd.append('video', file);
+      // fetch('/api/upload', {method:'POST', body:fd})then(...)
+    }
+
+    // keyboard accessibility for cards
+    document.querySelectorAll('card')forEach(c=>{
+      c.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' ') c.click(); });
+    });
+  </script>
+</body>
+</html>
+.set goals-section {
+            margin-top: 3rem;
+        }
+
+        .Set goals-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .Set goals-card:hover {
+            background: rgba(37, 37, 37, 0.8);
+        }
+
+        .Set goals-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .Set goals-info h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .Set goals-details {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .Set goals-rating {
+            text-align: right;
+        }
+
+        .rating-score {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .rating-trend {
+            background: var(--success-color);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .Set goals-status {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        Set goals-actions{
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+        }
+
+
+
+
+
+
+
+
+
+
+
